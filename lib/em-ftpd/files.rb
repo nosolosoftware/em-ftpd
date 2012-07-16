@@ -99,6 +99,9 @@ module EM::FTPD
       end
     end
 
+    # save a file from a client directly using a datasocket
+    # changed the response code to 226 to improve compatibility with the standard FTP protocol (STOR)
+
     def cmd_stor_streamed(target_path)
       wait_for_datasocket do |datasocket|
         if datasocket
@@ -115,6 +118,10 @@ module EM::FTPD
         end
       end
     end
+
+    # save a file from a client, using a temporal file received via socket
+    # changed the response code to 226 to improve compatibility with the standard FTP protocol (STOR)
+    # added forced closing of the datasocket
 
     def cmd_stor_tempfile(target_path)
       tmpfile = Tempfile.new("em-ftp")
@@ -136,6 +143,7 @@ module EM::FTPD
             end
           end
           tmpfile.unlink
+          close_datasocket # force closing the datasocket
         }
         datasocket.errback {
           tmpfile.unlink
