@@ -25,7 +25,7 @@ module EM::FTPD
       if driver.is_a?(Class) && args.empty?
         @driver = driver.new
       elsif driver.is_a?(Class)
-        @driver = driver.new *args
+        @driver = driver.new( *args )
       else
         @driver = driver
       end
@@ -166,9 +166,7 @@ module EM::FTPD
     # listen on a port, see RFC 2428
     #
     def cmd_epsv(param)
-      host, port = start_passive_socket
-
-      send_response "229 Entering Extended Passive Mode (|||#{port}|)"
+      send_response "229 Entering Extended Passive Mode (|||#{start_passive_socket[1]}|)"
     end
 
     # Active FTP. An alternative to Passive FTP. The client has a listening socket
@@ -201,7 +199,7 @@ module EM::FTPD
       send_param_required and return if param.nil?
 
       delim = param[0,1]
-      m, af, host, port = *param.match(/#{delim}(.+?)#{delim}(.+?)#{delim}(.+?)#{delim}/)
+      af, host, port = *param.match(/#{delim}(.+?)#{delim}(.+?)#{delim}(.+?)#{delim}/)[1..3]
       port = port.to_i
       close_datasocket
 

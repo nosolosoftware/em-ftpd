@@ -17,7 +17,7 @@ class EM::FTPD::Server
   def oobdata
     @oobdata ||= ""
   end
-  
+
   def reset_oobdata!
     @oobdata = ""
   end
@@ -43,16 +43,19 @@ end
 
 class EM::FTPD::PassiveSocket
   class << self
+    remove_method :start
     def start(host, control_server)
       control_server.datasocket = self.new(nil)
       @@control_server = control_server
       "12345"
     end
 
+    remove_method :stop
     def stop(*args)
       true
     end
 
+    remove_method :get_port
     def get_port(*args)
       40000
     end
