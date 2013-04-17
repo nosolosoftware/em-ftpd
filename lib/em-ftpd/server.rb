@@ -25,7 +25,7 @@ module EM::FTPD
       if driver.is_a?(Class) && args.empty?
         @driver = driver.new
       elsif driver.is_a?(Class)
-        @driver = driver.new *args
+        @driver = driver.new( *args )
       else
         @driver = driver
       end
@@ -119,7 +119,7 @@ module EM::FTPD
 
     def cmd_feat(param)
       str = "211- Supported features:#{LBRK}"
-      features = %w{ EPRT EPSV SIZE }
+      features = %w{ EPRT EPSV SIZE REST }
       features.each do |feat|
         str << " #{feat}" << LBRK
       end
@@ -166,9 +166,7 @@ module EM::FTPD
     # listen on a port, see RFC 2428
     #
     def cmd_epsv(param)
-      host, port = start_passive_socket
-
-      send_response "229 Entering Extended Passive Mode (|||#{port}|)"
+      send_response "229 Entering Extended Passive Mode (|||#{start_passive_socket[1]}|)"
     end
 
     # Active FTP. An alternative to Passive FTP. The client has a listening socket
@@ -201,7 +199,7 @@ module EM::FTPD
       send_param_required and return if param.nil?
 
       delim = param[0,1]
-      m, af, host, port = *param.match(/#{delim}(.+?)#{delim}(.+?)#{delim}(.+?)#{delim}/)
+      af, host, port = *param.match(/#{delim}(.+?)#{delim}(.+?)#{delim}(.+?)#{delim}/)[1..3]
       port = port.to_i
       close_datasocket
 
@@ -282,7 +280,7 @@ module EM::FTPD
     # ready to use, so it may take a few RTTs after the command is received at
     # the server before the data socket is ready.
     #
-    def send_outofband_data(data)
+    def send_outofband_data(data, restart_pos = 0)
       wait_for_datasocket do |datasocket|
         if datasocket.nil?
           send_response "425 Error establishing connection"
@@ -292,6 +290,7 @@ module EM::FTPD
           end
           data = StringIO.new(data) if data.kind_of?(String)
 
+          data.seek(restart_pos)
 
           if EM.reactor_running?
             # send the data out in chunks, as fast as the client can recieve it -- not blocking the reactor in the process

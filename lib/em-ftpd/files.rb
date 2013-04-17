@@ -21,7 +21,12 @@ module EM::FTPD
 
     # resume downloads
     def cmd_rest(param)
-      send_response "500 Feature not implemented"
+      if param.match(/^\d+$/)
+        @restart_pos = param.to_i
+        send_response "350 Restart position accepted (#{@restart_pos})."
+      else 
+        send_response "554 Invalid REST position (#{param})."
+      end
     end
 
     # send a file to the client
@@ -34,7 +39,7 @@ module EM::FTPD
       @driver.get_file(path) do |data|
         if data
           send_response "150 Data transfer starting #{data.size} bytes"
-          send_outofband_data(data)
+          send_outofband_data(data, @restart_pos || 0)
         else
           send_response "551 file not available"
         end
@@ -123,26 +128,29 @@ module EM::FTPD
       tmpfile.binmode
 
       wait_for_datasocket do |datasocket|
-        datasocket.on_stream { |chunk|
-          tmpfile.write chunk
-        }
-        send_response "150 Data transfer starting"
-        datasocket.callback {
-          puts "data transfer finished"
-          tmpfile.flush
-          @driver.put_file(target_path, tmpfile.path) do |bytes|
-            if bytes
-              send_response "226 OK, received #{bytes} bytes"
-            else
-              send_action_not_taken
+        # datasocket may be nil if connection get timeout'ed
+        if datasocket
+          datasocket.on_stream { |chunk|
+            tmpfile.write chunk
+          }
+          send_response "150 Data transfer starting"
+          datasocket.callback {
+            puts "data transfer finished"
+            tmpfile.flush
+            @driver.put_file(target_path, tmpfile.path) do |bytes|
+              if bytes
+                send_response "226 OK, received #{bytes} bytes"
+              else
+                send_action_not_taken
+              end
             end
-          end
-          tmpfile.unlink
-          close_datasocket # force closing the datasocket
-        }
-        datasocket.errback {
-          tmpfile.unlink
-        }
+            tmpfile.unlink
+            close_datasocket # force closing the datasocket
+          }
+          datasocket.errback {
+            tmpfile.unlink
+          }
+        end
       end
     end
 

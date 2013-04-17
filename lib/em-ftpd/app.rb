@@ -22,7 +22,7 @@ module EM::FTPD
         if config.pid_file
           File.open(config.pid_file, "w") { |io| io.write pid }
         end
-        exit!
+        exit!(true)
       end
     end
 
@@ -62,7 +62,7 @@ module EM::FTPD
 
     def change_gid(gid)
       if gid && Process.gid == 0
-        Process.gid = gid
+        Process::GID.change_privilege(gid)
       end
     end
 
