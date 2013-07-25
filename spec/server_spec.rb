@@ -18,8 +18,8 @@ describe EM::FTPD::Server, "initialisation" do
 
   it "should set driver instance variables ip and port" do
     driver = @c.instance_variable_get( :@driver )
-    driver.instance_variable_get( :@ip ).should == '127.0.0.1'
-    driver.instance_variable_get( :@port ).should == 21
+    driver._ip.should == '127.0.0.1'
+    driver._port.should == 21
   end
 end
 
