@@ -36,6 +36,14 @@ class EM::FTPD::Server
     end
   end
 
+  def get_peername
+    if RUBY_PLATFORM =~ /darwin/
+      "\020\002\010\111\177\000\000\001\000\000\000\000\000\000\000\000"
+    elsif RUBY_PLATFORM =~ /linux/
+      "\002\000\000\025\177\000\000\001\000\000\000\000\000\000\000\000"
+    end
+  end
+
   def close_connection_after_writing
     true
   end

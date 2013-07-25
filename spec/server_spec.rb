@@ -15,6 +15,12 @@ describe EM::FTPD::Server, "initialisation" do
   it "should respond with 220 when connection is opened" do
     @c.sent_data.should match(/^220/)
   end
+
+  it "should set driver instance variables ip and port" do
+    driver = @c.instance_variable_get( :@driver )
+    driver.instance_variable_get( :@ip ).should == '127.0.0.1'
+    driver.instance_variable_get( :@port ).should == 21
+  end
 end
 
 describe EM::FTPD::Server, "ALLO" do
