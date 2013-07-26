@@ -29,6 +29,11 @@ module EM::FTPD
       else
         @driver = driver
       end
+
+      class << @driver
+        attr_accessor :_ip, :_port
+      end
+
       @datasocket = nil
       @listen_sig = nil
       super()
@@ -37,6 +42,8 @@ module EM::FTPD
     def post_init
       @mode   = :binary
       @name_prefix = "/"
+
+      @driver._port, @driver._ip = Socket.unpack_sockaddr_in(get_peername)
 
       send_response "220 FTP server (em-ftpd) ready"
     end
