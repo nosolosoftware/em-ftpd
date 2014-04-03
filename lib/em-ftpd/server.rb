@@ -43,7 +43,7 @@ module EM::FTPD
       @mode   = :binary
       @name_prefix = "/"
 
-      @driver._port, @driver._ip = Socket.unpack_sockaddr_in(get_peername)
+      @driver._port, @driver._ip = Socket.unpack_sockaddr_in(get_peername) if get_peername
 
       send_response "220 FTP server (em-ftpd) ready"
     end
