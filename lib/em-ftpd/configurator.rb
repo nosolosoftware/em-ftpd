@@ -4,6 +4,8 @@ module EM::FTPD
 
   class Configurator
 
+    attr_accessible :ftp_options
+
     def initialize
       @user      = nil
       @group     = nil

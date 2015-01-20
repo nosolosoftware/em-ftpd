@@ -21,7 +21,7 @@ module EM::FTPD
     attr_reader :root, :name_prefix
     attr_accessor :datasocket
 
-    def initialize(driver, *args)
+    def initialize(ftp_options, driver, *args)
       if driver.is_a?(Class) && args.empty?
         @driver = driver.new
       elsif driver.is_a?(Class)
@@ -34,6 +34,7 @@ module EM::FTPD
         attr_accessor :_ip, :_port
       end
 
+      @ftp_options = ftp_options
       @datasocket = nil
       @listen_sig = nil
       super()
@@ -380,7 +381,7 @@ module EM::FTPD
 
       # open a listening socket on the appropriate host
       # and on a random port
-      @listen_sig = PassiveSocket.start(host, self)
+      @listen_sig = PassiveSocket.start(host, self, @ftp_options)
       port = PassiveSocket.get_port(@listen_sig)
 
       [host, port]

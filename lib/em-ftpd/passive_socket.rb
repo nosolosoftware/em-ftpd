@@ -8,8 +8,13 @@ module EM::FTPD
     include BaseSocket
     
 
-    def self.start(host, control_server)
-      EventMachine.start_server(host, 0, self) do |conn|
+    def self.start(host, control_server, ftp_options)
+
+      if ftp_options.is_a?( Hash ) and range = ftp_options[:passive_range_port] and range.is_a?( Range )
+        port = range.detect{ |i| system( "netcat localhost #{i} -w 1 -q 0 </dev/null" ) == false }
+      end
+
+      EventMachine.start_server(host, port || 0, self) do |conn|
         control_server.datasocket = conn
       end
     end
