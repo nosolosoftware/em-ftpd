@@ -384,7 +384,7 @@ module EM::FTPD
       @listen_sig = PassiveSocket.start(host, self, @ftp_options)
       port = PassiveSocket.get_port(@listen_sig)
 
-      [host, port]
+      [@ftp_options[:passive_host] || host, port]
     end
 
     # all responses from an FTP server end with \r\n, so wrap the
