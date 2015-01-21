@@ -5,7 +5,7 @@ require 'spec_helper'
 describe EM::FTPD::Server, "initialisation" do
 
   before(:each) do
-    @c = EM::FTPD::Server.new(nil, TestDriver.new)
+    @c = EM::FTPD::Server.new({},nil, TestDriver.new)
   end
 
   it "should default to a root name_prefix" do
@@ -26,7 +26,7 @@ end
 describe EM::FTPD::Server, "ALLO" do
 
   it "should always respond with 202 when called" do
-    @c = EM::FTPD::Server.new(nil, TestDriver.new)
+    @c = EM::FTPD::Server.new({},nil, TestDriver.new)
     @c.reset_sent!
     @c.receive_line("ALLO")
     @c.sent_data.should match(/^202/)
@@ -36,7 +36,7 @@ end
 describe EM::FTPD::Server, "USER" do
 
   before(:each) do
-    @c = EM::FTPD::Server.new(nil,TestDriver.new)
+    @c = EM::FTPD::Server.new({},nil,TestDriver.new)
   end
 
   it "should respond with 331 when called by non-logged in user" do
@@ -57,7 +57,7 @@ end
 
 describe EM::FTPD::Server, "PASS" do
   before(:each) do
-    @c = EM::FTPD::Server.new(nil, TestDriver.new)
+    @c = EM::FTPD::Server.new({},nil, TestDriver.new)
   end
 
   it "should respond with 202 when called by logged in user" do
@@ -100,7 +100,7 @@ end
 
   describe EM::FTPD::Server, command do
     before(:each) do
-      @c = EM::FTPD::Server.new(nil, TestDriver.new)
+      @c = EM::FTPD::Server.new({},nil, TestDriver.new)
     end
 
     it "should respond with 530 if user is not logged in" do
@@ -133,7 +133,7 @@ end
 
 describe EM::FTPD::Server, "CWD" do
   before(:each) do
-    @c = EM::FTPD::Server.new(nil, TestDriver.new)
+    @c = EM::FTPD::Server.new({},nil, TestDriver.new)
   end
 
   it "should respond with 530 if user is not logged in" do
@@ -230,7 +230,7 @@ end
 
 describe EM::FTPD::Server, "DELE" do
   before(:each) do
-    @c = EM::FTPD::Server.new(nil, TestDriver.new)
+    @c = EM::FTPD::Server.new({},nil, TestDriver.new)
   end
 
   it "should respond with 530 if user is not logged in" do
@@ -270,7 +270,7 @@ end
 
 describe EM::FTPD::Server, "HELP" do
   before(:each) do
-    @c = EM::FTPD::Server.new(nil, TestDriver.new)
+    @c = EM::FTPD::Server.new({},nil, TestDriver.new)
   end
   it "should always respond with 214 when called" do
     @c.reset_sent!
@@ -283,7 +283,7 @@ describe EM::FTPD::Server, "LIST" do
   # TODO: nlist
 
   before(:each) do
-    @c = EM::FTPD::Server.new(nil, TestDriver.new)
+    @c = EM::FTPD::Server.new({},nil, TestDriver.new)
   end
   let!(:root_files) {
     timestr = Time.now.strftime("%b %d %H:%M")
@@ -388,7 +388,7 @@ end
 
 describe EM::FTPD::Server, "MKD" do
   before(:each) do
-    @c = EM::FTPD::Server.new(nil, TestDriver.new)
+    @c = EM::FTPD::Server.new({},nil, TestDriver.new)
   end
 
   it "should respond with 530 if user is not logged in" do
@@ -426,7 +426,7 @@ end
 
 describe EM::FTPD::Server, "MODE" do
   before(:each) do
-    @c = EM::FTPD::Server.new(nil, TestDriver.new)
+    @c = EM::FTPD::Server.new({},nil, TestDriver.new)
   end
 
   it "should respond with 553 when called with no param" do
@@ -462,7 +462,7 @@ end
 
 describe EM::FTPD::Server, "NOOP" do
   before(:each) do
-    @c = EM::FTPD::Server.new(nil, TestDriver.new)
+    @c = EM::FTPD::Server.new({},nil, TestDriver.new)
   end
 
   it "should always respond with 202 when called" do
@@ -477,7 +477,7 @@ end
 %w(PWD XPWD).each do |command|
   describe EM::FTPD::Server, command do
     before(:each) do
-      @c = EM::FTPD::Server.new(nil, TestDriver.new)
+      @c = EM::FTPD::Server.new({},nil, TestDriver.new)
     end
 
     it "should always respond with 550 (permission denied) when called by non-logged in user" do
@@ -507,7 +507,7 @@ end
 
 describe EM::FTPD::Server, "RETR" do
   before(:each) do
-    @c = EM::FTPD::Server.new(nil, TestDriver.new)
+    @c = EM::FTPD::Server.new({},nil, TestDriver.new)
   end
 
   it "should respond with 553 when called with no param" do
@@ -554,7 +554,7 @@ end
 
 describe EM::FTPD::Server, "REST" do
   before(:each) do
-    @c = EM::FTPD::Server.new(nil, TestDriver.new)
+    @c = EM::FTPD::Server.new({},nil, TestDriver.new)
   end
 
   it "should accept a valid offset" do
@@ -573,7 +573,7 @@ end
 %w(RMD XRMD).each do |command|
   describe EM::FTPD::Server, command do
     before(:each) do
-      @c = EM::FTPD::Server.new(nil, TestDriver.new)
+      @c = EM::FTPD::Server.new({},nil, TestDriver.new)
     end
 
     it "should respond with 530 if user is not logged in" do
@@ -613,7 +613,7 @@ end
 
 describe EM::FTPD::Server, "RNFR" do
   before(:each) do
-    @c = EM::FTPD::Server.new(nil, TestDriver.new)
+    @c = EM::FTPD::Server.new({},nil, TestDriver.new)
   end
 
   it "should respond with 530 if user is not logged in" do
@@ -641,7 +641,7 @@ end
 
 describe EM::FTPD::Server, "RNTO" do
   before(:each) do
-    @c = EM::FTPD::Server.new(nil, TestDriver.new)
+    @c = EM::FTPD::Server.new({},nil, TestDriver.new)
   end
 
   it "should respond with 530 if user is not logged in" do
@@ -684,7 +684,7 @@ end
 
 describe EM::FTPD::Server, "QUIT" do
   before(:each) do
-    @c = EM::FTPD::Server.new(nil, TestDriver.new)
+    @c = EM::FTPD::Server.new({},nil, TestDriver.new)
   end
 
   it "should always respond with 221 when called" do
@@ -697,7 +697,7 @@ end
 describe EM::FTPD::Server, "SIZE" do
 
   before(:each) do
-    @c = EM::FTPD::Server.new(nil, TestDriver.new)
+    @c = EM::FTPD::Server.new({},nil, TestDriver.new)
   end
 
   it "should always respond with 530 when called by a non logged in user" do
@@ -751,7 +751,7 @@ end
 
 describe EM::FTPD::Server, "STRU" do
   before(:each) do
-    @c = EM::FTPD::Server.new(nil, TestDriver.new)
+    @c = EM::FTPD::Server.new({},nil, TestDriver.new)
   end
   it "should respond with 553 when called with no param" do
     @c.receive_line("USER test")
@@ -786,7 +786,7 @@ end
 
 describe EM::FTPD::Server, "SYST" do
   before(:each) do
-    @c = EM::FTPD::Server.new(nil, TestDriver.new)
+    @c = EM::FTPD::Server.new({},nil, TestDriver.new)
   end
 
   it "should respond with 530 when called by non-logged in user" do
@@ -809,7 +809,7 @@ end
 
 describe EM::FTPD::Server, "TYPE" do
   before(:each) do
-    @c = EM::FTPD::Server.new(nil, TestDriver.new)
+    @c = EM::FTPD::Server.new({},nil, TestDriver.new)
   end
 
   it "should respond with 530 when called by non-logged in user" do

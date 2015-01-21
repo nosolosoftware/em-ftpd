@@ -11,7 +11,7 @@ module EM::FTPD
     def self.start(host, control_server, ftp_options)
 
       if ftp_options.is_a?( Hash ) and range = ftp_options[:passive_range_port] and range.is_a?( Range )
-        port = range.detect{ |i| system( "netcat localhost #{i} -w 1 -q 0 </dev/null" ) == false }
+        port = range.detect{ |i| system( "nc localhost #{i} -w 1 -q 0 </dev/null" ) == false }
       end
 
       EventMachine.start_server(host, port || 0, self) do |conn|
