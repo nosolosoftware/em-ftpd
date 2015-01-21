@@ -4,8 +4,6 @@ module EM::FTPD
 
   class Configurator
 
-    attr_accessor :ftp_options
-
     def initialize
       @user      = nil
       @group     = nil
@@ -14,12 +12,18 @@ module EM::FTPD
       @pid_file  = nil
       @port      = 21
 
+      @ftp_options = {}
+
       @driver    = nil
       @driver_args = []
     end
 
     def user(val = nil)
       get_or_set(:user, val, :to_s)
+    end
+
+    def ftp_options( val = nil )
+      get_or_set(:ftp_options, val)
     end
 
     def uid
